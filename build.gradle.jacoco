@@ -1,4 +1,6 @@
 apply plugin: 'java'
+apply plugin: 'org.sonarqube'
+apply plugin: 'jacoco'
 apply plugin: 'eclipse'
 apply plugin: 'maven'
 
@@ -7,12 +9,29 @@ targetCompatibility = '1.8'
 
 version = '0.0.1'
 
+//./gradlew sonarqube
+sonarqube {
+    properties {
+        property "sonar.projectName", "Java :: Utility Project :: Security Utility"
+        property "sonar.projectKey", "$project.group:$project.name"
+        property "sonar.language", "java"
+        property "sonar.sources", "src"
+        property "sonar.sourceEncoding", "UTF-8"
+        property "sonar.junit.reportsPath", "${project.buildDir}/test-results"
+        property "sonar.jacoco.reportPath", "${project.buildDir}/jacoco/test.exec"
+    }
+}
+
 buildscript {
 	repositories { 
 		mavenCentral()
 		maven {
         	url "https://plugins.gradle.org/m2/"
 		}
+	}
+	dependencies { 
+      classpath 'org.ajoberstar:gradle-jacoco:0.1.0'
+      classpath 'org.sonarqube.gradle:gradle-sonarqube-plugin:1.0'
 	}
 }
 
