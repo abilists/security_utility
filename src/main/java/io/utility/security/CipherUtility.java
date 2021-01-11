@@ -1,5 +1,13 @@
 package io.utility.security;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.security.Security;
 
 import javax.crypto.Cipher;
@@ -75,6 +83,103 @@ public class CipherUtility {
 			throw new Exception(e);
 		}
 	}
+
+	public void encryptFile(InputStream isSource, File dest) throws Exception {
+        InputStream input = null;
+        OutputStream output = null;
+        try {
+            input = isSource;
+            output = new BufferedOutputStream(new FileOutputStream(dest));
+            byte[] buffer = new byte[1024];
+            int read = -1;
+            while ((read = input.read(buffer)) != -1) {
+                output.write(encrypter.update(buffer, 0, read));
+            }
+            output.write(encrypter.doFinal());
+		} catch (Exception e) {
+			throw new Exception(e);
+        } finally {
+            if (output != null) {
+            	output.close();
+            }
+            if (input != null) {
+            	input.close();
+            }
+        }
+    }
+
+	public void encryptFile(File source, File dest) throws Exception {
+        InputStream input = null;
+        OutputStream output = null;
+        try {
+            input = new BufferedInputStream(new FileInputStream(source));
+            output = new BufferedOutputStream(new FileOutputStream(dest));
+            byte[] buffer = new byte[1024];
+            int read = -1;
+            while ((read = input.read(buffer)) != -1) {
+                output.write(encrypter.update(buffer, 0, read));
+            }
+            output.write(encrypter.doFinal());
+		} catch (Exception e) {
+			throw new Exception(e);
+        } finally {
+            if (output != null) {
+            	output.close();
+            }
+            if (input != null) {
+            	input.close();
+            }
+        }
+    }
+
+	public byte[] decryptFile(String fullFilePath) throws Exception {
+
+		File file = new File(fullFilePath);
+		if (!file.exists()) {
+			return null;
+		}
+
+		// Set length of file
+		long fileLength = file.length();
+
+		// Create the byte array to hold the data
+		byte[] byteOut = new byte[(int) fileLength];
+		int read = -1;
+		try (InputStream input = new BufferedInputStream(new FileInputStream(file))) {
+			while ((read = input.read(byteOut)) != -1) {
+				byteOut = decrypter.update(byteOut, 0, read);
+			}
+			decrypter.doFinal();
+		} catch (IOException e) {
+			throw e;
+		}
+
+		return byteOut;
+	}
+
+	public void decryptFile(File source, File dest) throws Exception {
+        InputStream input = null;
+        OutputStream output = null;
+        try {
+            input = new BufferedInputStream(new FileInputStream(source));
+            output = new BufferedOutputStream(new FileOutputStream(dest));
+            byte[] buffer = new byte[1024];
+            int read = -1;
+            while ((read = input.read(buffer)) != -1) {
+                output.write(decrypter.update(buffer, 0, read));
+            }
+            output.write(decrypter.doFinal());
+		} catch (Exception e) {
+			throw new Exception(e);
+        } finally {
+            if (output != null) {
+            	output.close();
+            }
+            if (input != null) {
+            	input.close();
+            }
+        }
+    }
 
 	public Cipher getEncrypter() {
 		return encrypter;

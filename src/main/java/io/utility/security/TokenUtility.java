@@ -4,6 +4,11 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
 
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+
+import org.bouncycastle.util.encoders.Hex;
+
 public class TokenUtility {
 
 	public static String SHA_256 = "SHA-256";
@@ -23,6 +28,14 @@ public class TokenUtility {
 
 	public static String generateToken(String algorithm) {
 		return generateToken(getUuId(), algorithm);
+	}
+
+	public static String generateHashMd5(String value) {
+		return generateToken(value, null);
+	}
+
+	public static String generateHashSha256(String value) {
+		return generateToken(value, SHA_256);
 	}
 
 	public static String generateToken(String value, String algorithm) {
@@ -52,4 +65,24 @@ public class TokenUtility {
 		return sb.toString();
 	}
 
+	public static String hashHmacSha1(String value, String key) {
+		try {
+			byte[] hexBytes = Hex.encode(hashHmacSha1Raw(value, key));
+			return new String(hexBytes, "UTF-8");
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static byte[] hashHmacSha1Raw(String value, String key) {
+		try {
+			byte[] keyBytes = key.getBytes();           
+			SecretKeySpec signingKey = new SecretKeySpec(keyBytes, "HmacSHA1");
+			Mac mac = Mac.getInstance("HmacSHA1");
+			mac.init(signingKey);
+			return mac.doFinal(value.getBytes());
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 }

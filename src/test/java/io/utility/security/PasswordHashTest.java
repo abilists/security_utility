@@ -18,7 +18,7 @@ public class PasswordHashTest {
 		System.out.println("Before");
 	}
 
-	//@Test
+	@Test
 	public void testCreateHash() {
 
 		try {
@@ -39,7 +39,7 @@ public class PasswordHashTest {
 		System.out.println("This is the test");
 	}
 
-	@Test
+	// @Test
 	public void testCreateHashBase64() {
 
         try

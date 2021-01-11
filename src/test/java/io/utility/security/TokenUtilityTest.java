@@ -22,7 +22,8 @@ public class TokenUtilityTest {
 	public void testOne() {
 
 		try {
-			String token = TokenUtility.generateToken(TokenUtility.SHA_256);
+			// String token = TokenUtility.generateToken(TokenUtility.SHA_256);
+			String token = TokenUtility.generateHashMd5("test");
 			System.out.println(">>>" + token);
 
 		} catch (Exception e) {
@@ -32,6 +33,13 @@ public class TokenUtilityTest {
 		System.out.println("This is the test");
 	}
 
+	@Test
+	public void testTwo() {
+		System.out.println( TokenUtility.hashHmacSha1( "hello world", "secret" ) );
+		// 03376ee7ad7bbfceee98660439a4d8b125122a5a
+		System.out.println( new String(TokenUtility.hashHmacSha1Raw( "hello world", "secret" )) );
+	}
+	
 	@After
 	public void after() {
 		System.out.println("Before");
