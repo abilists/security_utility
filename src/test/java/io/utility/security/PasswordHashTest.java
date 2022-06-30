@@ -18,7 +18,7 @@ public class PasswordHashTest {
 		System.out.println("Before");
 	}
 
-	@Test
+	// @Test
 	public void testCreateHash() {
 
 		try {

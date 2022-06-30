@@ -18,15 +18,15 @@ public class CipherCompressUtilityTest {
 		System.out.println("Before");
 	}
 
-	@Test
+	// @Test
 	public void testOne() {
 
 		String key = "tet@abilists.com";
 
 		try {
-			CipherCompressUtility ccu = new CipherCompressUtility();
-			byte[] encrypted = ccu.encryptCompress("data", key);
-			ccu.decompressDecrypt(encrypted, key);
+//			CipherCompressUtility ccu = new CipherCompressUtility();
+//			byte[] encrypted = ccu.encryptCompress("data", key);
+//			ccu.decompressDecrypt(encrypted, key);
 
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -26,9 +26,9 @@ public class CryptoFileUtilsTest {
 		String key = "tet@abilists.com";
 		
 		try {
-			File inputFile = new File("test.xlsx");
+			File inputFile = new File("test1.xlsx");
 			File encryptedFile = new File("document.encrypted");
-			File decryptedFile = new File("test1.xlsx");
+			File decryptedFile = new File("test2.xlsx");
 
 			CryptoFileUtils cryptoFileUtils = new CryptoFileUtils();
 			cryptoFileUtils.encryptFile(key, inputFile, encryptedFile);
