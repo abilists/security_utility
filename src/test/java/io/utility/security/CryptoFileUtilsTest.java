@@ -30,9 +30,9 @@ public class CryptoFileUtilsTest {
 			File encryptedFile = new File("document.encrypted");
 			File decryptedFile = new File("test2.xlsx");
 
-			CryptoFileUtils cryptoFileUtils = new CryptoFileUtils();
-			cryptoFileUtils.encryptFile(key, inputFile, encryptedFile);
-			cryptoFileUtils.decryptFile(key, encryptedFile, decryptedFile);
+			CryptoFileUtils cryptoFileUtils = new CryptoFileUtils(key);
+			cryptoFileUtils.encryptFile(inputFile, encryptedFile);
+			cryptoFileUtils.decryptFile(encryptedFile, decryptedFile);
 
 		} catch (Exception e) {
 			e.printStackTrace();
