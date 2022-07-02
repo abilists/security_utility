@@ -24,72 +24,60 @@ public class CryptoFileUtils {
 
 	private static final String ALGORITHM = "AES";
 	private static final String TRANSFORMATION = "AES";
-	
-	private static String seedKey;
 
-	public CryptoFileUtils (String keyString) {
-		CryptoFileUtils.seedKey = keyString;
+	public static byte[] encryptByte(String seedkey, String fullFilePath) throws Exception {
+		return doCrypto(Cipher.ENCRYPT_MODE, seedkey, fullFilePath);
 	}
 
-	public static byte[] encryptByte(String fullFilePath) throws Exception {
-		return doCrypto(Cipher.ENCRYPT_MODE, fullFilePath);
+	public static byte[] decryptByte(String seedkey, String fullFilePath) throws Exception {
+		return doCrypto(Cipher.DECRYPT_MODE, seedkey, fullFilePath);
 	}
 
-	public static byte[] decryptByte(String fullFilePath) throws Exception {
-		return doCrypto(Cipher.DECRYPT_MODE, fullFilePath);
+	public static void encryptFile(String seedkey, InputStream inputIs, File outputFile) throws Exception {
+		doCrypto(Cipher.ENCRYPT_MODE, seedkey, inputIs, outputFile);
 	}
 
-	public static void encryptFile(InputStream inputIs, File outputFile) throws Exception {
-		doCrypto(Cipher.ENCRYPT_MODE, inputIs, outputFile);
+	public static void decryptFile(String seedkey, InputStream inputIs, File outputFile) throws Exception {
+		doCrypto(Cipher.DECRYPT_MODE, seedkey, inputIs, outputFile);
 	}
 
-	public static void decryptFile(InputStream inputIs, File outputFile) throws Exception {
-		doCrypto(Cipher.DECRYPT_MODE, inputIs, outputFile);
+	public static void encryptFile(String seedkey, File inputFile, File outputFile) throws Exception {
+		doCrypto(Cipher.ENCRYPT_MODE, seedkey, inputFile, outputFile);
 	}
 
-	public static void encryptFile(File inputFile, File outputFile) throws Exception {
-		doCrypto(Cipher.ENCRYPT_MODE, inputFile, outputFile);
+	public static void decryptFile(String seedkey, File inputFile, File outputFile) throws Exception {
+		doCrypto(Cipher.DECRYPT_MODE, seedkey, inputFile, outputFile);
 	}
 
-	public static void decryptFile(File inputFile, File outputFile) throws Exception {
-		doCrypto(Cipher.DECRYPT_MODE, inputFile, outputFile);
-	}
-
-	private static byte[] doCrypto(int cipherMode, String fullFilePath) throws Exception {
+	private static byte[] doCrypto(int cipherMode, String seedkey, String fullFilePath) throws Exception {
 
 		File file = new File(fullFilePath);
 		if (!file.exists()) {
 			return null;
 		}
 
-		Key secretKey = new SecretKeySpec(CryptoFileUtils.seedKey.getBytes(), ALGORITHM);
+		Key secretKey = new SecretKeySpec(seedkey.getBytes(), ALGORITHM);
 		Cipher cipher = Cipher.getInstance(TRANSFORMATION); 
 		cipher.init(cipherMode, secretKey);
 
-		// Set length of file
-		long fileLength = file.length();
-
-		// Create the byte array to hold the data
-		byte[] byteOut = new byte[(int) fileLength];
-		int read = -1;
+		byte[] byteOut;
 		try (InputStream input = new BufferedInputStream(new FileInputStream(file))) {
-			while ((read = input.read(byteOut)) != -1) {
-				byteOut = cipher.update(byteOut, 0, read);
-			}
-			cipher.doFinal();
+			byte[] inputBytes = new byte[(int) file.length()];
+			input.read(inputBytes);
+			byteOut = cipher.doFinal(inputBytes);
 		} catch (IOException e) {
-			throw e;
+			throw new IOException(e);
 		}
 
 		return byteOut;
 	}
 
-	private static void doCrypto(int cipherMode, InputStream input, File outputFile) throws Exception {
+	private static void doCrypto(int cipherMode, String seedkey, InputStream input, File outputFile) throws Exception {
 
         OutputStream output = null;
         try {
     		
-    		Key secretKey = new SecretKeySpec(CryptoFileUtils.seedKey.getBytes(), ALGORITHM);
+    		Key secretKey = new SecretKeySpec(seedkey.getBytes(), ALGORITHM);
     		Cipher cipher = Cipher.getInstance(TRANSFORMATION); 
     		cipher.init(cipherMode, secretKey);
 
@@ -113,13 +101,13 @@ public class CryptoFileUtils {
 
 	}
 
-	private static void doCrypto(int cipherMode, File inputFile, File outputFile) throws Exception {
+	private static void doCrypto(int cipherMode, String seedkey, File inputFile, File outputFile) throws Exception {
 
         InputStream input = null;
         OutputStream output = null;
         try {
     		
-    		Key secretKey = new SecretKeySpec(CryptoFileUtils.seedKey.getBytes(), ALGORITHM);
+    		Key secretKey = new SecretKeySpec(seedkey.getBytes(), ALGORITHM);
     		Cipher cipher = Cipher.getInstance(TRANSFORMATION); 
     		cipher.init(cipherMode, secretKey);
 
@@ -172,10 +160,6 @@ public class CryptoFileUtils {
 			throw new CryptoException("Error encrypting/decrypting file");
 		}
 
-	}
-
-	public void setSeedKey(String seedKey) {
-		this.seedKey = seedKey;
 	}
 
 }
